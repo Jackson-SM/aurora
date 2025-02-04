@@ -1,3 +1,4 @@
+import { AllocationChart } from '@/components/ui/dashboard/AllocationChart'
 import { Card, CardInfo } from '@/components/ui/dashboard/Card'
 import { Metadata } from 'next'
 
@@ -15,6 +16,7 @@ export default function Dashboard() {
     {
       title: 'Rendimentos',
       amount: 13029.32,
+      footer: <></>,
     },
     {
       title: 'Dividendos',
@@ -22,7 +24,12 @@ export default function Dashboard() {
     },
     {
       title: 'Alocação',
-      amount: 100000,
+      amount: [
+        { key: 'Ações', amount: 40 },
+        { key: 'FIIs', amount: 40 },
+        { key: 'Renda Fixa', amount: 20 },
+      ],
+      footer: <></>,
     },
   ]
 
@@ -30,7 +37,15 @@ export default function Dashboard() {
     <div className="p-4">
       <div className="flex gap-2">
         {cards.map((card) => {
-          return <Card key={card.title} info={card} />
+          return (
+            <Card
+              key={card.title}
+              info={card}
+              className={card.title === 'Alocação' ? 'flex' : ''}
+            >
+              {card.title === 'Alocação' && <AllocationChart />}
+            </Card>
+          )
         })}
       </div>
     </div>
