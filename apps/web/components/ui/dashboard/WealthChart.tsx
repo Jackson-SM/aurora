@@ -8,7 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/Chart'
-import { chartData } from '@/data/chatData'
+import { wealthData } from '@/data/wealthchart'
 
 export const description = 'An area chart with gradient fill'
 
@@ -24,13 +24,16 @@ export function WealthChart() {
     <ChartContainer config={chartConfig}>
       <AreaChart
         accessibilityLayer
-        data={chartData}
+        data={wealthData}
         margin={{
           left: 0,
           right: 0,
         }}
       >
-        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent className="bg-background/70" />}
+        />
         <defs>
           <linearGradient id="fillWords" x1="0" y1="0" x2="0" y2="1">
             <stop

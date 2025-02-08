@@ -1,4 +1,4 @@
-export const chartData = [
+export const wealthData = [
   { month: 'January', words: 1 },
   { month: 'February', words: 9 },
   { month: 'March', words: 10 },

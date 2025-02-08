@@ -9,25 +9,25 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/Chart'
 const chartData = [
-  { browser: 'chrome', visitors: 50, fill: 'var(--color-chrome)' },
-  { browser: 'safari', visitors: 40, fill: 'var(--color-safari)' },
-  { browser: 'firefox', visitors: 10, fill: 'var(--color-firefox)' },
+  { type: 'FIIs', percentage: 43.4, fill: 'var(--color-fiis)' },
+  { type: 'Ações', percentage: 46.5, fill: 'var(--color-acoes)' },
+  { type: 'Renda Fixa', percentage: 10.1, fill: 'var(--color-rf)' },
 ]
 
 const chartConfig = {
-  visitors: {
-    label: 'Visitors',
+  percentage: {
+    label: 'Porcentagem',
   },
-  chrome: {
-    label: 'Chrome',
+  fiis: {
+    label: 'Fundos Imobiliarios',
     color: 'hsl(var(--chart-1))',
   },
-  safari: {
-    label: 'Safari',
+  acoes: {
+    label: 'Ações',
     color: 'hsl(var(--chart-2))',
   },
-  firefox: {
-    label: 'Firefox',
+  rf: {
+    label: 'Renda Fixa',
     color: 'hsl(var(--chart-3))',
   },
 } satisfies ChartConfig
@@ -39,11 +39,8 @@ export function AllocationChart() {
       className="mx-auto aspect-square max-h-[250px]"
     >
       <PieChart>
-        <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent hideLabel />}
-        />
-        <Pie data={chartData} dataKey="visitors" nameKey="browser" />
+        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <Pie data={chartData} dataKey="percentage" nameKey="type" />
       </PieChart>
     </ChartContainer>
   )
