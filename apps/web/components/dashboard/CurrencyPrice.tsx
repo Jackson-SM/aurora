@@ -10,7 +10,7 @@ import { CurrencyCard } from './CurrencyCard'
 
 export const CurrencyPrice = () => {
   return (
-    <Card className="">
+    <Card className="flex-1">
       <CardHeader>
         <div>
           <CardTitle>Cotação</CardTitle>

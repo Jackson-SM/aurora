@@ -1,5 +1,6 @@
 import { CardSummary } from '@/components/dashboard/CardSummary'
 import { CurrencyPrice } from '@/components/dashboard/CurrencyPrice'
+import { Dividends } from '@/components/dashboard/Dividends'
 import { LineChartCard } from '@/components/dashboard/LineChartCard'
 import { WalletAllocation } from '@/components/dashboard/WalletAllocation'
 import { WalletBallance } from '@/components/dashboard/WalletBalance'
@@ -15,7 +16,7 @@ export default function Dashboard() {
   const cards = [
     {
       title: 'Patrimônio',
-      amount: 135 + 12,
+      amount: 235.13 + 12,
       upMoney: 12,
       chart: <LineChartCard />,
     },
@@ -36,7 +37,7 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen flex p-2 gap-2">
       <div className="flex-1 flex flex-col rounded-lg overflow-hidden gap-3">
-        <div className="flex bg-card justify-around">
+        <div className="flex bg-card justify-around border border-border rounded-lg p-2">
           {cards.map((card) => (
             <CardSummary key={card.title} {...card} />
           ))}
@@ -44,12 +45,15 @@ export default function Dashboard() {
         <div className="flex gap-2">
           <WalletBallance />
           <WalletAllocation />
+        </div>
+        <div className="flex gap-2">
+          <Dividends />
           <CurrencyPrice />
         </div>
       </div>
-      <aside className="w-96 p-2 flex-shrink-0 rounded-md relative">
+      <aside className="w-96 flex-shrink-0 rounded-md relative">
         <div className="fixed flex flex-col gap-2 w-full">
-          <div className="bg-muted p-2 rounded-lg">
+          <div className="bg-card border border-border p-2 rounded-lg">
             <h2 className="text-lg">Movimentações</h2>
             <div>
               <ul>
@@ -61,10 +65,10 @@ export default function Dashboard() {
               </ul>
             </div>
           </div>
-          <div className="bg-muted p-2 rounded-lg">
+          <div className="bg-card border border-border p-2 rounded-lg">
             <h2 className="text-lg">Ativos</h2>
           </div>
-          <div className="bg-muted p-2 rounded-lg">
+          <div className="bg-card border border-border p-2 rounded-lg">
             <h2 className="text-lg">Criptomoedas</h2>
           </div>
         </div>
