@@ -1,15 +1,13 @@
-import { Header } from '@/components/shared/Header'
+import { DashboardHeader } from '@/components/shared/DashboardHeader'
 import { Suspense } from 'react'
 
 export default function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <>
-      <Header />
-      <Suspense fallback={<h1>Loading...</h1>}>
-        <main>{children}</main>
-      </Suspense>
-    </>
+    <div className="min-h-screen">
+      <DashboardHeader />
+      <Suspense fallback={<h1>Loading...</h1>}>{children}</Suspense>
+    </div>
   )
 }
