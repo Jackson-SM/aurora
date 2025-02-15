@@ -1,16 +1,8 @@
 'use client'
 
-import { TrendingUp } from 'lucide-react'
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/Card'
+import { Card, CardContent } from '@/components/ui/Card'
 import {
   ChartConfig,
   ChartContainer,
@@ -18,29 +10,31 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/Chart'
 const chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
+  { month: 'January', dividends: 40 },
+  { month: 'February', dividends: 42 },
+  { month: 'March', dividends: 45 },
+  { month: 'April', dividends: 48 },
+  { month: 'May', dividends: 52 },
+  { month: 'June', dividends: 58 },
+  { month: 'July', dividends: 63 },
+  { month: 'August', dividends: 70 },
+  { month: 'September', dividends: 78 },
+  { month: 'October', dividends: 88 },
+  { month: 'November', dividends: 98 },
+  { month: 'December', dividends: 110 },
 ]
 
 const chartConfig = {
-  desktop: {
-    label: 'Desktop',
+  dividends: {
+    label: 'Dividendos',
     color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig
 
 export function Dividends() {
   return (
-    <Card className="">
-      <CardHeader>
-        <CardTitle>Bar Chart - Label</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className="flex-1">
+      <CardContent className="h-full">
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
@@ -49,7 +43,7 @@ export function Dividends() {
               top: 20,
             }}
           >
-            <CartesianGrid vertical={false} />
+            <CartesianGrid vertical={false} horizontal={false} />
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -61,7 +55,7 @@ export function Dividends() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8}>
+            <Bar dataKey="dividends" fill="var(--color-dividends)" radius={8}>
               <LabelList
                 position="top"
                 offset={12}
@@ -72,14 +66,6 @@ export function Dividends() {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   )
 }

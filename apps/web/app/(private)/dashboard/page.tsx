@@ -35,7 +35,7 @@ export default function Dashboard() {
   ]
 
   return (
-    <main className="min-h-screen flex p-2 gap-2">
+    <main className="flex p-2 gap-2 bg-gradient-to-t from-bg-primary to-bg-secondary h-full">
       <div className="flex-1 flex flex-col rounded-lg overflow-hidden gap-3">
         <div className="flex bg-card justify-around border border-border rounded-lg p-2">
           {cards.map((card) => (
@@ -44,33 +44,29 @@ export default function Dashboard() {
         </div>
         <div className="flex gap-2">
           <WalletBallance />
-          <WalletAllocation />
         </div>
         <div className="flex gap-2">
           <Dividends />
+          <WalletAllocation />
           <CurrencyPrice />
         </div>
       </div>
-      <aside className="w-96 flex-shrink-0 rounded-md relative">
-        <div className="fixed flex flex-col gap-2 w-full">
-          <div className="bg-card border border-border p-2 rounded-lg">
-            <h2 className="text-lg">Movimentações</h2>
-            <div>
-              <ul>
-                <li>{convertCash(20.43, Locale.BR, Currency.BRL)}</li>
-                <li>{convertCash(18.9, Locale.BR, Currency.BRL)}</li>
-                <li>{convertCash(41.09, Locale.BR, Currency.BRL)}</li>
-                <li>{convertCash(55.12, Locale.BR, Currency.BRL)}</li>
-                <li>{convertCash(29.85, Locale.BR, Currency.BRL)}</li>
-              </ul>
-            </div>
-          </div>
-          <div className="bg-card border border-border p-2 rounded-lg">
-            <h2 className="text-lg">Ativos</h2>
-          </div>
-          <div className="bg-card border border-border p-2 rounded-lg">
-            <h2 className="text-lg">Criptomoedas</h2>
-          </div>
+      <aside className="rounded-md relative h-full bg-primary">
+        <div className="bg-card border border-border p-2 rounded-lg flex-1">
+          <h2 className="text-lg">Movimentações</h2>
+          <ul>
+            <li>{convertCash(20.43, Locale.BR, Currency.BRL)}</li>
+            <li>{convertCash(18.9, Locale.BR, Currency.BRL)}</li>
+            <li>{convertCash(41.09, Locale.BR, Currency.BRL)}</li>
+            <li>{convertCash(55.12, Locale.BR, Currency.BRL)}</li>
+            <li>{convertCash(29.85, Locale.BR, Currency.BRL)}</li>
+          </ul>
+        </div>
+        <div className="bg-card border border-border p-2 rounded-lg flex-1">
+          <h2 className="text-lg">Ativos</h2>
+        </div>
+        <div className="bg-card border border-border p-2 rounded-lg flex-1">
+          <h2 className="text-lg">Criptomoedas</h2>
         </div>
       </aside>
     </main>

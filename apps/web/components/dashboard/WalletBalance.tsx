@@ -3,13 +3,7 @@
 import * as React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/Card'
+import { Card, CardContent } from '@/components/ui/Card'
 import {
   ChartConfig,
   ChartContainer,
@@ -18,13 +12,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/Chart'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select'
 const chartData = [
   { date: '2024-04-01', desktop: 222, mobile: 150 },
   { date: '2024-04-02', desktop: 97, mobile: 180 },
@@ -152,33 +139,6 @@ export function WalletBallance() {
 
   return (
     <Card className="flex-1">
-      <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
-        <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>Area Chart - Interactive</CardTitle>
-          <CardDescription>
-            Showing total visitors for the last 3 months
-          </CardDescription>
-        </div>
-        <Select value={timeRange} onValueChange={setTimeRange}>
-          <SelectTrigger
-            className="w-[160px] rounded-lg sm:ml-auto"
-            aria-label="Select a value"
-          >
-            <SelectValue placeholder="Last 3 months" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl">
-            <SelectItem value="90d" className="rounded-lg">
-              Last 3 months
-            </SelectItem>
-            <SelectItem value="30d" className="rounded-lg">
-              Last 30 days
-            </SelectItem>
-            <SelectItem value="7d" className="rounded-lg">
-              Last 7 days
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer
           config={chartConfig}
@@ -211,7 +171,7 @@ export function WalletBallance() {
                 />
               </linearGradient>
             </defs>
-            <CartesianGrid vertical={false} />
+            <CartesianGrid vertical={false} horizontal={false} />
             <XAxis
               dataKey="date"
               tickLine={false}
