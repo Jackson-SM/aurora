@@ -46,7 +46,6 @@ export function WalletAllocation() {
               cursor={false}
               content={<ChartTooltipContent />}
               labelFormatter={(value) => value}
-              formatter={(value) => value + '%'}
             />
             <Pie
               data={chartData}

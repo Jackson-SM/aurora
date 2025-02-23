@@ -1,9 +1,9 @@
 import React from 'react'
-import { Card, CardContent, CardHeader } from '../ui/Card'
 import Image from 'next/image'
 import { convertCash, Currency, Locale } from '@/utils/convert_cash'
 import { Poppins } from 'next/font/google'
 import { cn } from '@/lib/utils'
+import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 
 const poppins = Poppins({ weight: ['500'], style: ['normal'] })
 
@@ -21,7 +21,13 @@ export const CurrencyCard = ({
   ...props
 }: CurrencyCardProps) => {
   return (
-    <Card className={cn('w-full h-full', className)} {...props}>
+    <Card
+      className={cn(
+        'w-full h-full hover:bg-muted cursor-pointer transition-colors duration-150',
+        className
+      )}
+      {...props}
+    >
       <CardHeader>
         <Image
           src={`https://flagcdn.com/w320/${flag}.png`}

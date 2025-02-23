@@ -1,14 +1,14 @@
 import React from 'react'
+import { CurrencyCard } from './CurrencyCard'
+import { FaArrowRightArrowLeft } from 'react-icons/fa6'
+import { Currency, Locale } from '@/utils/convert_cash'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../ui/Card'
-import { CurrencyCard } from './CurrencyCard'
-import { FaArrowRightArrowLeft } from 'react-icons/fa6'
-import { Currency, Locale } from '@/utils/convert_cash'
+} from '@/components/ui/Card'
 
 export const CurrencyPrice = () => {
   const convertFrom = {
