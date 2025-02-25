@@ -6,26 +6,34 @@ import { UserMapper } from '../mappers/user-mapper'
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private prisma: PrismaClient) {}
+  async createUser(user: User): Promise<User> {
 
-  async createUser(user: User): Promise<void> {
     const userExists = await this.prisma.user.findUnique({
       where: {
         email: user.email,
-      },
+      }
     })
 
-    if (userExists) {
+    if(userExists) {
       throw new httpErrors.Conflict('User already exists')
     }
 
-    await this.prisma.user.create({
-      data: UserMapper.toPrisma(user),
+    const createdUser = await this.prisma.user.create({
+      data: {
+        email: user.email,
+        password: user.password,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      }
     })
+
+    return UserMapper.toDomain(createdUser)
   }
-  async getUser(id: string): Promise<User> {
+
+  async findByEmail(email: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
       where: {
-        id,
+        email,
       },
     })
 
@@ -35,6 +43,7 @@ export class PrismaUserRepository implements UserRepository {
 
     return UserMapper.toDomain(user)
   }
+
   async updateUser(user: User): Promise<void> {
     const userExists = await this.prisma.user.findUnique({
       where: {

@@ -1,34 +1,19 @@
-import { User } from '@/models/user'
+import { UserResponseDTO } from '@/dtos/user-response.dto'
 import { UserRepository } from '@/repositories/user.repository'
-import { createUserSchema } from '@/schemas/users/create-user.schema'
-import { getUserByIdSchema } from '@/schemas/users/get-user-by-id.schema'
-import { UserViewModel } from '@/view-model/user-view-model'
+import { findUserByEmailSchema } from '@/schemas/users/find-user-by-email'
 import { FastifyReply, FastifyRequest } from 'fastify'
 
 export class UserController {
   constructor(private userRepository: UserRepository) {}
 
-  async create(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-    const { email, firstName, lastName, password } = createUserSchema.parse(
-      request.body,
-    )
+  async findByEmail(request: FastifyRequest, reply: FastifyReply) {
+    const { email } = findUserByEmailSchema.parse(request.query)
 
-    const user = new User({ email, firstName, lastName, password })
+    console.log(email, 'hello')
 
-    await this.userRepository.createUser(user)
+    const user = await this.userRepository.findByEmail(email)
 
-    reply.code(201).send()
-  }
-
-  async getUserById(
-    request: FastifyRequest,
-    reply: FastifyReply,
-  ): Promise<void> {
-    const { id } = getUserByIdSchema.parse(request.query)
-
-    const user = await this.userRepository.getUser(id)
-
-    reply.send(UserViewModel.toHttp(user))
+    return reply.code(200).send(UserResponseDTO.toHttp(user))
   }
 
   async update(request: FastifyRequest, reply: FastifyReply): Promise<void> {

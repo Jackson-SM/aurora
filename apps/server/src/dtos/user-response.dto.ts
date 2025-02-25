@@ -1,6 +1,6 @@
 import { User } from '@/models/user'
 
-export class UserViewModel {
+export class UserResponseDTO {
   static toHttp(user: User) {
     return {
       id: user.id,
@@ -8,8 +8,8 @@ export class UserViewModel {
       firstName: user.firstName,
       lastName: user.lastName,
       active: user.active,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      createdAt: user.createdAt.toISOString(),
+      updatedAt: user.updatedAt.toISOString(),
     }
   }
 }

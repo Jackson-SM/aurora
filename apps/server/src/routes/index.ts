@@ -1,4 +1,4 @@
-import { usersRoutes } from './users.route'
+import { usersRoutes } from './users.routes'
 
 export default {
   usersRoutes,
