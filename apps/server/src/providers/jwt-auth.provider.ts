@@ -5,9 +5,13 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 
 export class JwtAuthProvider implements IAuthProvider {
   async generateToken(payload: Payload): Promise<string> {
-    const token = jwt.sign({email: payload.email, id: payload.id}, env.JWT_SECRET_KEY, {
-      expiresIn: '1h',
-    })
+    const token = jwt.sign(
+      { email: payload.email, id: payload.id },
+      env.JWT_SECRET_KEY,
+      {
+        expiresIn: '1h',
+      },
+    )
 
     return token
   }

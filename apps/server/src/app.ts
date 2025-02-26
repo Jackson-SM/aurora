@@ -4,11 +4,19 @@ import { usersRoutes } from './routes/users.routes'
 import fastifyCookie from '@fastify/cookie'
 import fastifyMiddie from '@fastify/middie'
 import { authRoutes } from './routes/auth.routes'
+import { fastifyAwilixPlugin } from '@fastify/awilix'
 
 const fastify = Fastify({
   logger: false,
 })
 
+fastify.register(fastifyAwilixPlugin, {
+  disposeOnClose: true,
+  disposeOnResponse: true,
+  strictBooleanEnforced: true,
+  asyncInit: true,
+  asyncDispose: true,
+})
 fastify.register(fastifyCookie, {
   secret: process.env.JWT_SECRET_KEY,
   hook: 'onRequest',
@@ -20,7 +28,7 @@ fastify.register(fastifyMiddie)
 fastify.register(
   (app) => {
     app.register(usersRoutes, { prefix: '/users' })
-    app.register(authRoutes, {prefix: '/auth'})
+    app.register(authRoutes, { prefix: '/auth' })
   },
   { prefix: '/api/v1' },
 )

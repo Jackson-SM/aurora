@@ -1,8 +1,9 @@
 import { IAuthProvider } from '@/interfaces/auth.provider'
-import { makeHash } from '@/lib/argon2'
+import { verifyHash } from '@/lib/argon2'
 import { User } from '@/models/user'
 import { AuthRepository } from '@/repositories/auth.repository'
 import { UserRepository } from '@/repositories/user.repository'
+import httpErrors from 'http-errors'
 
 export class AuthService implements AuthRepository {
   private userRepository: UserRepository
@@ -14,7 +15,20 @@ export class AuthService implements AuthRepository {
   }
 
   async login(email: string, password: string): Promise<string> {
-    throw new Error('Method not implemented.')
+    const user = await this.userRepository.findByEmail(email)
+
+    const isPasswordValid = await verifyHash(user.password, password)
+
+    if (!isPasswordValid) {
+      throw new httpErrors.Unauthorized('incorrect credentials')
+    }
+
+    const token = await this.authProvider.generateToken({
+      email: user.email,
+      id: user.id,
+    })
+
+    return token
   }
   async signup(user: User): Promise<string> {
     const createdUser = await this.userRepository.createUser(user)
