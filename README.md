@@ -1,84 +1,75 @@
-# Turborepo starter
+# Sobre **Aurora**
 
-This Turborepo starter is maintained by the Turborepo core team.
+Esse projeto é uma aplicação em monorepo utilizando [TurboRepo](https://turbo.build/). A ideia principal é criar uma aplicação que possa ser utilizada como um consolidador de carteiras de investimentos. A aplicação é dividida em duas partes, uma aplicação web e uma aplicação server para gerir informações sensíveis e realizar a comunicação com a aplicação web promovendo uma maior segurança.
 
-## Using this example
+## Tecnologias Utilizadas
+### Backend:
+- [Fastify](https://fastify.io/)
+- [Prisma](https://www.prisma.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [JWT](https://jwt.io/)
+- [Argon2](https://www.npmjs.com/package/argon2)
+- [Eslint](https://eslint.org/)+[Prettier](https://prettier.io/)
+- [Awilix](https://www.npmjs.com/package/awilix)
+- [Zod](https://zod.dev/)
+### Frontend:
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Shadcn](https://ui.shadcn.com/)
+- [React Hook Form](https://react-hook-form.com/)
+- [React Query](https://react-query.tanstack.com/)
+- [React Icons](https://react-icons.github.io/react-icons/)
 
-Run the following command:
+## Utilizando a aplicação
+
+Inicie os seguintes comandos
 
 ```sh
-npx create-turbo@latest
+git clone https://github.com/Jackson-SM/aurora
+cd aurora
+# Instale as dependências
+yarn
 ```
 
-## What's inside?
+### Configuração
+- Crie um arquivo .env na raiz da aplicação após utilizar o `git clone` e adicione as variaveis de ambiente necessárias contidas no arquivo `.env.example`.
+- Para iniciar o banco de dados, foi utilizado o Docker.
+```sh
+cd aurora
+docker-compose up -d
+```
 
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+Dessa forma, ele irá criar um container com o banco de dados PostgreSQL. Você pode substituir as informações do `.env` para se adequar ao seu ambiente. Como o usuário e a senha do banco de dados PostgreSQL.
 
 ### Build
 
-To build all apps and packages, run the following command:
+Para iniciar o processo de build, execute os seguintes comandos:
+
+Caso não possua yarn:
+``
+npm install -g yarn
+``
 
 ```
-cd my-turborepo
-pnpm build
+cd aurora
+yarn build
 ```
 
-### Develop
+### Desenvolvimento
 
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+Para iniciar o processo de desenvolvimento, execute os seguintes comandos:
 
 ```
-cd my-turborepo
-npx turbo login
+cd aurora
+yarn dev
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## Arquivos da Aplicação
 
-```
-npx turbo link
-```
+### Apps and Packages
 
-## Useful Links
+- `@aurora/server`: `server` é uma aplicação [Fastify](https://fastify.dev/)
+- `@aurora/web`: `web` é uma aplicação [Next.js](https://nextjs.org/)
 
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+Cada `package/app` é 100% [TypeScript](https://www.typescriptlang.org/).
