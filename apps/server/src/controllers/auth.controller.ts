@@ -1,5 +1,4 @@
 import { makeHash } from '@/lib/argon2'
-import { redis } from '@/lib/redis'
 import { User } from '@/models/user'
 import { AuthRepository } from '@/repositories/auth.repository'
 import { loginSchema } from '@/schemas/auth/loginSchema'
@@ -41,7 +40,7 @@ export class AuthController {
 
     const token = await this.authRepository.login(email, password)
 
-    return reply.code(201).cookie('aurora-token', token).send()
+    return reply.code(204).cookie('aurora-token', token).send()
   }
 
   logout = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -51,8 +50,20 @@ export class AuthController {
       throw new httpErrors.Unauthorized('Unauthorized')
     }
 
-    await redis.setEx(token, 3600 * 24 * 7, 'blacklist')
+    await this.authRepository.logout(token)
 
     return reply.code(204).send()
+  }
+
+  refreshToken = async (request: FastifyRequest, reply: FastifyReply) => {
+    const tokenExists = request.cookies['aurora-token']
+
+    if (!tokenExists) {
+      throw new httpErrors.Unauthorized('Unauthorized')
+    }
+
+    const token = await this.authRepository.refreshToken(tokenExists)
+
+    return reply.cookie('aurora-token', token).send()
   }
 }

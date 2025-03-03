@@ -9,7 +9,7 @@ export class JwtAuthProvider implements IAuthProvider {
       { email: payload.email, id: payload.id },
       env.JWT_SECRET_KEY,
       {
-        expiresIn: '7d',
+        expiresIn: 20,
       },
     )
 
@@ -17,8 +17,6 @@ export class JwtAuthProvider implements IAuthProvider {
   }
   async verifyToken(token: string): Promise<JwtPayload | string> {
     const payload = jwt.verify(token, env.JWT_SECRET_KEY)
-
-    console.log(payload)
 
     return payload
   }

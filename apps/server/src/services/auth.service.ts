@@ -1,5 +1,7 @@
 import { IAuthProvider } from '@/interfaces/auth.provider'
+import { Payload } from '@/interfaces/payload'
 import { verifyHash } from '@/lib/argon2'
+import { redis } from '@/lib/redis'
 import { User } from '@/models/user'
 import { AuthRepository } from '@/repositories/auth.repository'
 import { UserRepository } from '@/repositories/user.repository'
@@ -14,8 +16,21 @@ export class AuthService implements AuthRepository {
     this.authProvider = authProvider
   }
 
-  refreshToken(): Promise<string> {
-    throw new Error('Method not implemented.')
+  async refreshToken(token: string): Promise<string> {
+    const blackListedToken = await redis.get(token)
+
+    if (blackListedToken) {
+      throw new httpErrors.Unauthorized('Token is black listed')
+    }
+
+    const decoded = (await this.authProvider.verifyToken(token)) as Payload
+
+    const newToken = await this.authProvider.generateToken({
+      email: decoded.email,
+      id: decoded.id,
+    })
+
+    return newToken
   }
 
   async login(email: string, password: string): Promise<string> {
@@ -41,8 +56,8 @@ export class AuthService implements AuthRepository {
 
     return token
   }
-  async logout(): Promise<void> {
-    throw new Error('Method not implemented.')
+  async logout(token: string): Promise<void> {
+    await redis.setEx(token, 3600 * 24 * 7, 'blacklist')
   }
   async forgotPassword(): Promise<void> {
     throw new Error('Method not implemented.')

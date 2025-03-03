@@ -7,8 +7,8 @@ export function authRoutes(app: FastifyInstance) {
 
   app.post('/signup', authController.signup)
   app.post('/login', authController.login)
-
   app.post('/logout', { preHandler: authenticate }, authController.logout)
+  app.get('/refresh-token', authController.refreshToken)
 
   app.post('/forgot-password', async (request, reply) => {
     reply.send({ message: 'forgot-password' })

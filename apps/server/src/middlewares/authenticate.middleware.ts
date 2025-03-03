@@ -17,8 +17,12 @@ export const authenticate = async (
   }
 
   jwt.verify(token, env.JWT_SECRET_KEY, (err, decoded) => {
-    if (err) {
-      throw new httpErrors.Unauthorized('Invalidate Token')
+    if (err?.name == 'TokenExpiredError') {
+      throw new httpErrors.Unauthorized('Expired Token')
+    }
+
+    if (err?.name == 'JsonWebTokenError') {
+      throw new httpErrors.Unauthorized('Invalid Token')
     }
 
     return decoded
