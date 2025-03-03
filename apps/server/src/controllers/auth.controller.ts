@@ -1,9 +1,11 @@
 import { makeHash } from '@/lib/argon2'
+import { redis } from '@/lib/redis'
 import { User } from '@/models/user'
 import { AuthRepository } from '@/repositories/auth.repository'
 import { loginSchema } from '@/schemas/auth/loginSchema'
 import { signupSchema } from '@/schemas/auth/signupSchema'
 import { FastifyReply, FastifyRequest } from 'fastify'
+import httpErrors from 'http-errors'
 
 export class AuthController {
   constructor(private authRepository: AuthRepository) {}
@@ -23,7 +25,15 @@ export class AuthController {
 
     const token = await this.authRepository.signup(user)
 
-    return reply.code(201).cookie('aurora-token', token).send()
+    const expiresIn = new Date()
+    expiresIn.setDate(expiresIn.getDate() + 7)
+
+    return reply
+      .code(201)
+      .cookie('aurora-token', token, {
+        expires: expiresIn,
+      })
+      .send()
   }
 
   login = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -31,6 +41,18 @@ export class AuthController {
 
     const token = await this.authRepository.login(email, password)
 
-    return reply.code(204).cookie('aurora-token', token).send()
+    return reply.code(201).cookie('aurora-token', token).send()
+  }
+
+  logout = async (request: FastifyRequest, reply: FastifyReply) => {
+    const token = request.cookies['aurora-token']
+
+    if (!token) {
+      throw new httpErrors.Unauthorized('Unauthorized')
+    }
+
+    await redis.setEx(token, 3600 * 24 * 7, 'blacklist')
+
+    return reply.code(204).send()
   }
 }

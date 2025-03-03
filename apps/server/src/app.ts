@@ -1,10 +1,10 @@
 import 'dotenv/config'
 import Fastify from 'fastify'
-import { usersRoutes } from './routes/users.routes'
 import fastifyCookie from '@fastify/cookie'
 import fastifyMiddie from '@fastify/middie'
-import { authRoutes } from './routes/auth.routes'
 import { fastifyAwilixPlugin } from '@fastify/awilix'
+import { authRoutes, usersRoutes } from './routes'
+import { initRedis } from './lib/redis'
 
 const fastify = Fastify({
   logger: false,
@@ -20,7 +20,11 @@ fastify.register(fastifyAwilixPlugin, {
 fastify.register(fastifyCookie, {
   secret: process.env.JWT_SECRET_KEY,
   hook: 'onRequest',
-  parseOptions: { httpOnly: true, secure: true },
+  parseOptions: {
+    httpOnly: true,
+    secure: true,
+    path: '/',
+  },
 })
 
 fastify.register(fastifyMiddie)
@@ -32,6 +36,8 @@ fastify.register(
   },
   { prefix: '/api/v1' },
 )
+
+initRedis()
 fastify.listen({ port: 3001 }, function (err, address) {
   if (err) {
     fastify.log.error(err)

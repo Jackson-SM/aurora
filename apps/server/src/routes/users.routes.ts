@@ -7,9 +7,5 @@ export const usersRoutes = function (fastify: FastifyInstance) {
 
   fastify.get(':email', userController.findByEmail)
 
-  fastify.put(
-    ':id',
-    { preHandler: authenticate },
-    userController.update.bind(userController),
-  )
+  fastify.put(':id', { preHandler: authenticate }, userController.update)
 }

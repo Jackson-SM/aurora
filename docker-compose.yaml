@@ -10,3 +10,8 @@ services:
       POSTGRES_DB: aurora
     ports:
       - "5432:5432"
+  memory-db:
+    image: redis:6
+    container_name: memory-db
+    ports:
+      - "6379:6379"

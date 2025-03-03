@@ -14,6 +14,10 @@ export class AuthService implements AuthRepository {
     this.authProvider = authProvider
   }
 
+  refreshToken(): Promise<string> {
+    throw new Error('Method not implemented.')
+  }
+
   async login(email: string, password: string): Promise<string> {
     const user = await this.userRepository.findByEmail(email)
 

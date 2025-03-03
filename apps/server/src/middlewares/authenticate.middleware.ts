@@ -1,10 +1,11 @@
 import { env } from '@/config/env'
+import { redis } from '@/lib/redis'
 import { NextFunction } from '@fastify/middie'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import httpErrors from 'http-errors'
 import jwt from 'jsonwebtoken'
 
-export const authenticate = (
+export const authenticate = async (
   req: FastifyRequest,
   res: FastifyReply,
   done: NextFunction,
@@ -15,9 +16,19 @@ export const authenticate = (
     throw new httpErrors.Unauthorized('Unauthorized')
   }
 
-  const payload = jwt.verify(token, env.JWT_SECRET_KEY)
+  jwt.verify(token, env.JWT_SECRET_KEY, (err, decoded) => {
+    if (err) {
+      throw new httpErrors.Unauthorized('Invalidate Token')
+    }
 
-  console.log(payload)
+    return decoded
+  })
+
+  const blackListToken = await redis.get(token)
+
+  if (blackListToken) {
+    throw new httpErrors.Unauthorized('Token is blacklisted')
+  }
 
   done()
 }

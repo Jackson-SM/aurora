@@ -9,7 +9,7 @@ export class JwtAuthProvider implements IAuthProvider {
       { email: payload.email, id: payload.id },
       env.JWT_SECRET_KEY,
       {
-        expiresIn: '1h',
+        expiresIn: '7d',
       },
     )
 

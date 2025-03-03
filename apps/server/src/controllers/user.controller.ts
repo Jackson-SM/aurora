@@ -1,6 +1,6 @@
 import { UserResponseDTO } from '@/dtos/user-response.dto'
 import { UserRepository } from '@/repositories/user.repository'
-import { findUserByEmailSchema } from '@/schemas/users/find-user-by-email'
+import { findUserByEmailSchema } from '@/schemas/users/find-user-by-email.schema'
 import { FastifyReply, FastifyRequest } from 'fastify'
 
 export class UserController {
@@ -15,7 +15,6 @@ export class UserController {
   }
 
   update = async (request: FastifyRequest, reply: FastifyReply) => {
-    console.log(process.env.JWT_SECRET_KEY)
-    reply.send(request.cookies['aurora-token'])
+    return reply.send('update')
   }
 }
