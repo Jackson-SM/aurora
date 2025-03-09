@@ -23,6 +23,7 @@ fastify.register(fastifyCookie, {
   parseOptions: {
     httpOnly: true,
     secure: true,
+    sameSite: 'lax',
     path: '/',
   },
 })

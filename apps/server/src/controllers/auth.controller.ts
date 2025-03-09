@@ -28,8 +28,8 @@ export class AuthController {
     expiresIn.setDate(expiresIn.getDate() + 7)
 
     return reply
-      .code(201)
-      .cookie('aurora-token', token, {
+      .code(204)
+      .setCookie('aurora-token', token, {
         expires: expiresIn,
       })
       .send()
@@ -40,7 +40,7 @@ export class AuthController {
 
     const token = await this.authRepository.login(email, password)
 
-    return reply.code(204).cookie('aurora-token', token).send()
+    return reply.code(204).setCookie('aurora-token', token).send()
   }
 
   logout = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -64,6 +64,14 @@ export class AuthController {
 
     const token = await this.authRepository.refreshToken(tokenExists)
 
-    return reply.cookie('aurora-token', token).send()
+    const expiresIn = new Date()
+    expiresIn.setDate(expiresIn.getDate() + 7)
+
+    return reply
+      .code(204)
+      .setCookie('aurora-token', token, {
+        expires: expiresIn,
+      })
+      .send()
   }
 }

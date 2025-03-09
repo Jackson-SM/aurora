@@ -23,5 +23,28 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  Transactions Transactions[]
+
   @@map("users")
+}
+
+model Transactions {
+  id           String          @id @default(uuid())
+  userId       String          @map("user_id") @db.Uuid
+  symbol       String          @db.VarChar(10)
+  type         TransactionType @default(BUY)
+  quantity     Int             @default(1)
+  pricePerUnit Decimal         @map("price_per_unit") @db.Decimal(10, 2)
+  totalPrice   Decimal         @map("total_price") @db.Decimal(19, 4)
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  BUY
+  SELL
 }

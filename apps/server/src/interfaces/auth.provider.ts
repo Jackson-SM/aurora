@@ -1,4 +1,7 @@
+import { Payload } from './payload'
+
 export abstract class IAuthProvider {
-  abstract generateToken(payload: unknown): Promise<string>
-  abstract verifyToken(token: string): Promise<unknown>
+  abstract generateToken(payload: Payload): Promise<string>
+  abstract verifyToken(token: string): Promise<Payload>
+  abstract decode(token: string): Promise<Payload>
 }

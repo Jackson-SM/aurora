@@ -1,5 +1,4 @@
 import { IAuthProvider } from '@/interfaces/auth.provider'
-import { Payload } from '@/interfaces/payload'
 import { verifyHash } from '@/lib/argon2'
 import { redis } from '@/lib/redis'
 import { User } from '@/models/user'
@@ -23,12 +22,9 @@ export class AuthService implements AuthRepository {
       throw new httpErrors.Unauthorized('Token is black listed')
     }
 
-    const decoded = (await this.authProvider.verifyToken(token)) as Payload
+    const decoded = await this.authProvider.decode(token)
 
-    const newToken = await this.authProvider.generateToken({
-      email: decoded.email,
-      id: decoded.id,
-    })
+    const newToken = await this.authProvider.generateToken(decoded)
 
     return newToken
   }

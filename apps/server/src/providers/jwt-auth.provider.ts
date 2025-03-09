@@ -1,9 +1,20 @@
 import { env } from '@/config/env'
 import { IAuthProvider } from '@/interfaces/auth.provider'
 import { Payload } from '@/interfaces/payload'
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
+import httpErrors from 'http-errors'
 
 export class JwtAuthProvider implements IAuthProvider {
+  async decode(token: string): Promise<Payload> {
+    const decoded = jwt.decode(token)
+
+    if (!decoded) {
+      throw new httpErrors.Unauthorized('Invalid Token')
+    }
+
+    return decoded as Payload
+  }
+
   async generateToken(payload: Payload): Promise<string> {
     const token = jwt.sign(
       { email: payload.email, id: payload.id },
@@ -15,9 +26,9 @@ export class JwtAuthProvider implements IAuthProvider {
 
     return token
   }
-  async verifyToken(token: string): Promise<JwtPayload | string> {
+  async verifyToken(token: string): Promise<Payload> {
     const payload = jwt.verify(token, env.JWT_SECRET_KEY)
 
-    return payload
+    return payload as Payload
   }
 }
