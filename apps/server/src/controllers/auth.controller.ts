@@ -1,4 +1,3 @@
-import { makeHash } from '@/lib/argon2'
 import { User } from '@/models/user'
 import { AuthRepository } from '@/repositories/auth.repository'
 import { loginSchema } from '@/schemas/auth/loginSchema'
@@ -7,71 +6,46 @@ import { FastifyReply, FastifyRequest } from 'fastify'
 import httpErrors from 'http-errors'
 
 export class AuthController {
-  constructor(private authRepository: AuthRepository) {}
+  constructor(private authService: AuthRepository) {}
+
+  login = async (request: FastifyRequest, reply: FastifyReply) => {
+    const { email, password } = loginSchema.parse(request.body)
+
+    const { accessToken, refreshToken } = await this.authService.login(
+      email,
+      password,
+    )
+
+    reply.setCookie('refreshToken', refreshToken)
+    reply.setCookie('accessToken', accessToken)
+
+    return reply.code(204).send()
+  }
 
   signup = async (request: FastifyRequest, reply: FastifyReply) => {
     const { email, firstName, lastName, password } = signupSchema.parse(
       request.body,
     )
-    const passwordHash = await makeHash(password)
 
-    const user = new User({
-      email,
-      firstName,
-      lastName,
-      password: passwordHash,
-    })
+    const user = new User({ email, firstName, lastName, password })
 
-    const token = await this.authRepository.signup(user)
+    const { accessToken, refreshToken } = await this.authService.signup(user)
 
-    const expiresIn = new Date()
-    expiresIn.setDate(expiresIn.getDate() + 7)
+    reply.setCookie('refreshToken', refreshToken)
+    reply.setCookie('accessToken', accessToken)
 
-    return reply
-      .code(204)
-      .setCookie('aurora-token', token, {
-        expires: expiresIn,
-      })
-      .send()
-  }
-
-  login = async (request: FastifyRequest, reply: FastifyReply) => {
-    const { email, password } = loginSchema.parse(request.body)
-
-    const token = await this.authRepository.login(email, password)
-
-    return reply.code(204).setCookie('aurora-token', token).send()
-  }
-
-  logout = async (request: FastifyRequest, reply: FastifyReply) => {
-    const token = request.cookies['aurora-token']
-
-    if (!token) {
-      throw new httpErrors.Unauthorized('Unauthorized')
-    }
-
-    await this.authRepository.logout(token)
-
-    return reply.code(204).send()
+    return reply.code(201).send()
   }
 
   refreshToken = async (request: FastifyRequest, reply: FastifyReply) => {
-    const tokenExists = request.cookies['aurora-token']
+    const refreshToken = request.cookies.refreshToken
 
-    if (!tokenExists) {
-      throw new httpErrors.Unauthorized('Unauthorized')
+    if (!refreshToken) {
+      throw new httpErrors.Unauthorized('refreshToken not found')
     }
 
-    const token = await this.authRepository.refreshToken(tokenExists)
+    const newAccessToken = await this.authService.refreshToken(refreshToken)
 
-    const expiresIn = new Date()
-    expiresIn.setDate(expiresIn.getDate() + 7)
-
-    return reply
-      .code(204)
-      .setCookie('aurora-token', token, {
-        expires: expiresIn,
-      })
-      .send()
+    return reply.code(204).setCookie('accessToken', newAccessToken).send()
   }
 }

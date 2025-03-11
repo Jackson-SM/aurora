@@ -1,64 +1,96 @@
-import { IAuthProvider } from '@/interfaces/auth.provider'
+import { env } from '@/config/env'
+import { AuthenticatedResponse } from '@/interfaces/authenticated-response.interface'
+import { IJwtProvider } from '@/interfaces/jwt-provider.interface'
+import { Payload } from '@/interfaces/payload'
+import { VerifyTokenStatus } from '@/interfaces/verify-token-status'
 import { verifyHash } from '@/lib/argon2'
-import { redis } from '@/lib/redis'
 import { User } from '@/models/user'
 import { AuthRepository } from '@/repositories/auth.repository'
 import { UserRepository } from '@/repositories/user.repository'
 import httpErrors from 'http-errors'
 
 export class AuthService implements AuthRepository {
-  private userRepository: UserRepository
-  private authProvider: IAuthProvider
+  constructor(
+    private userRepository: UserRepository,
+    private jwtProvider: IJwtProvider,
+  ) {}
 
-  constructor(authProvider: IAuthProvider, userRepository: UserRepository) {
-    this.userRepository = userRepository
-    this.authProvider = authProvider
-  }
+  private accessTokenExpiresIn = 10 * 6 * 60 // 10 seconds x 6 x 60 = 60 minutes / 1 hour
+  private refreshTokenExpiresIn = 10 * 6 * 60 * 24 * 7 // 10 seconds x 6 x 60 x 24 x 7 = 7 days
 
-  async refreshToken(token: string): Promise<string> {
-    const blackListedToken = await redis.get(token)
+  async signup(user: User): Promise<AuthenticatedResponse> {
+    const userCreated = await this.userRepository.createUser(user)
 
-    if (blackListedToken) {
-      throw new httpErrors.Unauthorized('Token is black listed')
+    const payload: Payload = {
+      email: userCreated.email,
+      id: userCreated.id,
     }
 
-    const decoded = await this.authProvider.decode(token)
+    const accessToken = await this.jwtProvider.generateToken(
+      payload,
+      env.JWT_ACCESS_TOKEN,
+      { expiresIn: this.accessTokenExpiresIn },
+    )
+    const refreshToken = await this.jwtProvider.generateToken(
+      payload,
+      env.JWT_REFRESH_TOKEN,
+      { expiresIn: this.refreshTokenExpiresIn },
+    )
 
-    const newToken = await this.authProvider.generateToken(decoded)
-
-    return newToken
+    return {
+      accessToken,
+      refreshToken,
+    }
   }
-
-  async login(email: string, password: string): Promise<string> {
+  async login(email: string, password: string): Promise<AuthenticatedResponse> {
     const user = await this.userRepository.findByEmail(email)
 
-    const isPasswordValid = await verifyHash(user.password, password)
+    const isValidPassword = await verifyHash(user.password, password)
 
-    if (!isPasswordValid) {
-      throw new httpErrors.Unauthorized('incorrect credentials')
+    if (!isValidPassword) {
+      throw new httpErrors.Unauthorized('Invalid email or password')
     }
 
-    const token = await this.authProvider.generateToken({
+    const payload: Payload = {
       email: user.email,
       id: user.id,
-    })
+    }
 
-    return token
-  }
-  async signup(user: User): Promise<string> {
-    const createdUser = await this.userRepository.createUser(user)
+    const accessToken = await this.jwtProvider.generateToken(
+      payload,
+      env.JWT_ACCESS_TOKEN,
+      { expiresIn: this.accessTokenExpiresIn },
+    )
+    const refreshToken = await this.jwtProvider.generateToken(
+      payload,
+      env.JWT_REFRESH_TOKEN,
+      { expiresIn: this.refreshTokenExpiresIn },
+    )
 
-    const token = this.authProvider.generateToken(createdUser)
+    return {
+      accessToken,
+      refreshToken,
+    }
+  }
+  async refreshToken(refreshToken: string): Promise<string> {
+    const payload = await this.jwtProvider.verifyToken(
+      refreshToken,
+      env.JWT_REFRESH_TOKEN,
+    )
 
-    return token
-  }
-  async logout(token: string): Promise<void> {
-    await redis.setEx(token, 3600 * 24 * 7, 'blacklist')
-  }
-  async forgotPassword(): Promise<void> {
-    throw new Error('Method not implemented.')
-  }
-  async resetPassword(): Promise<void> {
-    throw new Error('Method not implemented.')
+    if (
+      payload === VerifyTokenStatus.INVALID ||
+      payload === VerifyTokenStatus.EXPIRED
+    ) {
+      throw new httpErrors.Unauthorized('Invalid or expired token')
+    }
+
+    const accessToken = await this.jwtProvider.generateToken(
+      { email: payload.email, id: payload.id },
+      env.JWT_ACCESS_TOKEN,
+      { expiresIn: this.accessTokenExpiresIn },
+    )
+
+    return accessToken
   }
 }

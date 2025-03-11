@@ -5,18 +5,18 @@ import prisma from '@/lib/prisma-client'
 import { UserRepository } from '@/repositories/user.repository'
 import { asClass, asValue } from 'awilix'
 
-interface IUserContainerCradle {
+interface IUserSetupCradle {
   prisma: typeof prisma
   userRepository: UserRepository
   userController: UserController
 }
 
-const userContainer = newContainer<IUserContainerCradle>()
+const setupUserDependencies = newContainer<IUserSetupCradle>()
 
-userContainer.register({
+setupUserDependencies.register({
   prisma: asValue(prisma),
   userRepository: asClass(PrismaUserRepository).singleton(),
   userController: asClass(UserController).singleton(),
 })
 
-export { userContainer }
+export { setupUserDependencies }

@@ -1,20 +1,12 @@
-import { authContainer } from '@/di/auth.container'
-import { authenticate } from '@/middlewares/authenticate.middleware'
+import { setupAuthDependencies } from '@/di/auth.dependencies'
 import { FastifyInstance } from 'fastify'
 
-export function authRoutes(app: FastifyInstance) {
-  const authController = authContainer.resolve('authController')
+export const authRoutes = function (fastify: FastifyInstance) {
+  const authController = setupAuthDependencies.resolve('authController')
 
-  app.post('/signup', authController.signup)
-  app.post('/login', authController.login)
-  app.post('/logout', { preHandler: authenticate }, authController.logout)
-  app.get('/refresh-token', authController.refreshToken)
+  fastify.post('/login', authController.login)
 
-  app.post('/forgot-password', async (request, reply) => {
-    reply.send({ message: 'forgot-password' })
-  })
+  fastify.post('/signup', authController.signup)
 
-  app.post('/reset-password', async (request, reply) => {
-    reply.send({ message: 'reset-password' })
-  })
+  fastify.get('/refresh-token', authController.refreshToken)
 }
